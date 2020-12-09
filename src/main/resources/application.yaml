@@ -1,0 +1,14 @@
+server:
+  port : 8082
+
+cameraUrl: http://www.mocky.io/v2/5c51b9dd3400003252129fb5
+
+logging:
+  level:
+    org:
+      apache:
+        http: DEBUG
+      springframework:
+        web:
+          client:
+            RestTemplate: DEBUG
