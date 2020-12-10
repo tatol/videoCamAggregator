@@ -2,6 +2,7 @@ package com.tatol.videoCamAggregator.manager.impl;
 
 import com.google.common.collect.Lists;
 import com.tatol.videoCamAggregator.manager.api.DataLoaderManager;
+import com.tatol.videoCamAggregator.model.CameraFullResponseData;
 import com.tatol.videoCamAggregator.model.CameraResponseData;
 import com.tatol.videoCamAggregator.model.SourceData;
 import com.tatol.videoCamAggregator.model.TokenData;
@@ -15,8 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CountDownLatch;
 
 @Component
 @Log4j2
@@ -30,23 +31,30 @@ public class DataLoaderManagerImpl implements DataLoaderManager {
 
 	@Override
 	public List<CameraResponseData> getCameraResponseData() {
-		ResponseEntity<CameraResponseData[]> entity = restTemplate.getForEntity(cameraUrl, CameraResponseData[].class);
-		CameraResponseData[] entityBody = entity.getBody();
-		if (entityBody == null) {
-			return new ArrayList<>();
+		CameraResponseData[] entityBody;
+		try {
+			ResponseEntity<CameraResponseData[]> entity = restTemplate.getForEntity(cameraUrl, CameraResponseData[].class);
+			entityBody = entity.getBody();
+			return entityBody != null ? Lists.newArrayList(entityBody) : new ArrayList<>();
+		} catch (Exception e) {
+			log.error(e);
 		}
-		return Lists.newArrayList(entityBody);
+		return new ArrayList<>();
 	}
 
 	@Override
 	@Async
-	public Future<SourceData> getSourceData(String url) {
-		return CompletableFuture.completedFuture(restTemplate.getForObject(url, SourceData.class));
-	}
-
-	@Override
-	@Async
-	public Future<TokenData> getTokenData(String url) {
-		return CompletableFuture.completedFuture(restTemplate.getForObject(url, TokenData.class));
+	public void fillResultList(CopyOnWriteArrayList<CameraFullResponseData> list, CameraResponseData data, CountDownLatch countDownLatch) {
+		try {
+			SourceData sourceData = restTemplate.getForObject(data.getSourceDataUrl(), SourceData.class);
+			TokenData tokenData = restTemplate.getForObject(data.getTokenDataUrl(), TokenData.class);
+			if (sourceData != null && tokenData != null) {
+				list.add(new CameraFullResponseData(data.getId(), sourceData.getUrlType(), sourceData.getVideoUrl(), tokenData.getValue(), tokenData.getTtl()));
+			}
+		} catch (Exception e) {
+			log.error(e);
+		} finally {
+			countDownLatch.countDown();
+		}
 	}
 }

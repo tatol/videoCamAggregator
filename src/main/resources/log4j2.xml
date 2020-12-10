@@ -6,14 +6,8 @@
 		</Console>
 	</Appenders>
 	<Loggers>
-		<Logger name="com.tatol.videoCamAggregator" level="debug" additivity="false">
+		<AsyncRoot level="debug">
 			<AppenderRef ref="LogToConsole"/>
-		</Logger>
-		<Logger name="org.springframework.boot" level="error" additivity="false">
-			<AppenderRef ref="LogToConsole"/>
-		</Logger>
-		<Root level="error">
-			<AppenderRef ref="LogToConsole"/>
-		</Root>
+		</AsyncRoot>
 	</Loggers>
 </Configuration>
