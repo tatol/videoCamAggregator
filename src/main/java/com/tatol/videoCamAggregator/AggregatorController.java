@@ -2,7 +2,7 @@ package com.tatol.videoCamAggregator;
 
 import com.tatol.videoCamAggregator.model.CameraFullResponseData;
 import com.tatol.videoCamAggregator.service.api.AggregatorService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class AggregatorController {
 
-	@Autowired
-	private AggregatorService aggregatorService;
+	private final AggregatorService aggregatorService;
 
 	@RequestMapping(value = "/cameras", method = RequestMethod.GET)
 	public List<CameraFullResponseData> getCameraFullResponseData() {

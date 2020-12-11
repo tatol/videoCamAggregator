@@ -6,6 +6,7 @@ import com.tatol.videoCamAggregator.model.CameraFullResponseData;
 import com.tatol.videoCamAggregator.model.CameraResponseData;
 import com.tatol.videoCamAggregator.model.SourceData;
 import com.tatol.videoCamAggregator.model.TokenData;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,13 +22,13 @@ import java.util.concurrent.CountDownLatch;
 
 @Component
 @Log4j2
+@RequiredArgsConstructor
 public class DataLoaderManagerImpl implements DataLoaderManager {
 
 	@Value("${cameraUrl:}")
 	private String cameraUrl;
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private final RestTemplate restTemplate;
 
 	@Override
 	public List<CameraResponseData> getCameraResponseData() {

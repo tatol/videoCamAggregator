@@ -4,6 +4,7 @@ import com.tatol.videoCamAggregator.manager.api.AggregatorManager;
 import com.tatol.videoCamAggregator.manager.api.DataLoaderManager;
 import com.tatol.videoCamAggregator.model.CameraFullResponseData;
 import com.tatol.videoCamAggregator.model.CameraResponseData;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,10 +15,10 @@ import java.util.concurrent.CountDownLatch;
 
 @Component
 @Log4j2
+@RequiredArgsConstructor
 public class AggregatorManagerImpl implements AggregatorManager {
 
-	@Autowired
-	private DataLoaderManager dataLoaderManager;
+	private final DataLoaderManager dataLoaderManager;
 
 	@Override
 	public List<CameraFullResponseData> getCameraFullResponseData() {
